@@ -1,9 +1,9 @@
 package com.example.manager.controller;
 
 
+import com.example.manager.client.ProductRestClient;
 import com.example.manager.controller.paylaod.UpdateProductPayload;
 import com.example.manager.entity.Product;
-import com.example.manager.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("catalogue/products/{productId:\\d+}")
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductRestClient productRestClient;
 
     @ModelAttribute("product")
     public Product product(@PathVariable("productId") int productId) {
-        return this.productService.findProduct(productId).orElseThrow();
+        return this.productRestClient.findProduct(productId).orElseThrow();
     }
 
     @GetMapping
@@ -36,7 +36,7 @@ public class ProductController {
 
     @PostMapping("edit")
     public String updateProduct(@ModelAttribute("product") Product product, UpdateProductPayload updateProductPayload) {
-        this.productService.updateProduct(
+        this.productRestClient.updateProduct(
                 product.getId(),
                 updateProductPayload.title(),
                 updateProductPayload.details()
@@ -46,7 +46,7 @@ public class ProductController {
 
     @PostMapping("delete")
     public String deleteProduct(@ModelAttribute("product") Product product) {
-        this.productService.deleteProduct(product.getId());
+        this.productRestClient.deleteProduct(product.getId());
         return "redirect:/catalogue/products/list";
     }
 }
